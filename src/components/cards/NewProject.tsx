@@ -10,13 +10,13 @@ import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 
 // Auth, Firebase
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { collection, addDoc, getFirestore } from '@firebase/firestore';
 
 // My Components, Types
-import SignupForm, { ProduceSelection } from './SignupForm';
+import SignupForm, { ProduceSelection } from '../SignupForm';
 import GridCard from './GridCard';
-import SuccessAlert from './SuccessAlert';
+import SuccessAlert from '../SuccessAlert';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({

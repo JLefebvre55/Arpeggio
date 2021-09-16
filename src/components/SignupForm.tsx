@@ -22,9 +22,6 @@ import CloseIcon from '@material-ui/icons/Close';
 import { useAuth } from '../contexts/AuthContext';
 import { collection, getDocs, getFirestore } from '@firebase/firestore';
 
-// My Components, Types
-import DeviceRegister from './DeviceRegister';
-
 // Styles
 const styles = (theme: Theme) => createStyles({
     root: {
@@ -126,19 +123,6 @@ const SignupForm: FC<SignupProps> = (props: SignupProps) => {
                 </DialogTitle>
                 <DialogContent dividers>
                     <FormLabel component='legend'>Select Produce:</FormLabel>
-                    <FormGroup>
-                        {Object.entries(selection).map((option, index)=>{
-                            return (
-                                <DeviceRegister 
-                                    key={index} 
-                                    option={option[0]} 
-                                    label={option[1].option.name+': $'+option[1].option.price} 
-                                    quantity={option[1].quantity} 
-                                    updateSelection={updateSelection}
-                                />
-                            );
-                        })}
-                    </FormGroup>
                     <FormLabel component='legend'>Select Shipping Period:</FormLabel>
                     <FormGroup>
                         <FormControl className={classes.formControl}>

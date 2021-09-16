@@ -23,21 +23,20 @@ const theme = createTheme({
     },
     palette: {
         background: {
-            default: '#F4F4F7',
-            paper: '#DCDCF9'
+            default: '#6b6b84',
+            paper: '#383444'
         },
         text: {
-            primary: '#434051',
+            primary: '#ffffff',
             secondary: '#383645'
         },
         primary: {
-            main: '#4343ED',
-            light: '#DCDCF9',
-            contrastText: '#F4F4F7'
+            main: '#ffb634',
+            contrastText: '#171615'
         },
         secondary: {
-            main: '#F5296D',
-            contrastText: '#F4F4F7'
+            main: '#71d8ff',
+            contrastText: '#171615'
         }
     },
     overrides: {

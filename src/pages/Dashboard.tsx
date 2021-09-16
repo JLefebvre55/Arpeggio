@@ -6,7 +6,7 @@ import { Theme } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
 
-import DeviceGrid from '../components/DeviceGrid';
+import ProjectGrid from '../components/ProjectGrid';
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -34,11 +34,11 @@ const Dashboard:FC = () => {
         <div>
             <Box className={classes.header} >
                 <Typography variant='h4'>
-                    Manage Devices
+                    My Projects
                 </Typography>
             </Box>
             <Box className={classes.grid}>
-                <DeviceGrid />
+                <ProjectGrid />
             </Box>
         </div>
     );

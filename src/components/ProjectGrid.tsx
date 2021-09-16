@@ -15,8 +15,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { collection, query, where, onSnapshot, getFirestore } from '@firebase/firestore'
 
 // My Components, Types
-import DeviceCard, { DeviceCardProps } from './DeviceCard';
-import NewSubscription from './NewSubscription';
+import DeviceCard, { DeviceCardProps } from './cards/ProjectCard';
+import NewSubscription from './cards/NewProject';
 import SuccessAlert from './SuccessAlert';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -80,7 +80,7 @@ const DeviceGrid : FC<DeviceGridProps> = (props) => {
                     {gridData.length === 0 ? (
                         <Box className={classes.header}>
                             <Typography variant='h6'>
-                                No devices found for {user?.displayName}!
+                                No projects found for {user?.displayName}!
                             </Typography>
                         </Box>
                     ) : (<></>)}
@@ -97,7 +97,7 @@ const DeviceGrid : FC<DeviceGridProps> = (props) => {
                         })}
                         <NewSubscription/>
                         <SuccessAlert openState={deleteAlert} onClose={handleDeleteAlertClose}>
-                            Device deleted!
+                            Project deleted!
                         </SuccessAlert>
                     </Grid>
                 </>
