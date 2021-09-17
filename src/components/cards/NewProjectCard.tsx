@@ -14,7 +14,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { collection, addDoc, getFirestore } from '@firebase/firestore';
 
 // My Components, Types
-import SignupForm, { ProduceSelection } from '../SignupForm';
+import NewProjectDialog from '../NewProjectDialog';
 import GridCard from './GridCard';
 import SuccessAlert from '../SuccessAlert';
 
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-const NewSubscription:FC = () => {
+const NewProjectCard:FC = () => {
     const classes = useStyles();
     const user = useAuth()?.uid;
     
@@ -39,18 +39,12 @@ const NewSubscription:FC = () => {
         setOpen(false);
     };
     
-    const placeOrderAndClose = (selection: {[key: string]: ProduceSelection}, period: number, address: string): void => {
+    const createProjectAndClose = (name: string): void => {
         // Place the order here
         handleClose();
-        const list = Object.fromEntries(Object.entries(selection).map(entry=>{
-            return [entry[0], entry[1].quantity];
-        }));
-        addDoc(collection(getFirestore(), 'subscriptions'), {
+        addDoc(collection(getFirestore(), 'projects'), {
             owner: user,
-            destination: address,
-            period: period,
-            source: 'Cluster Farm '+Math.floor(Math.random()*100+1),
-            list: list 
+            name: name
         }).then(()=>{
             setAlert(true);
         });
@@ -70,16 +64,16 @@ const NewSubscription:FC = () => {
             <GridCard>
                 <Box>
                     <Button variant='contained' color='primary' className={classes.button} startIcon={<AddCircleOutlineIcon fontSize='large' />} onClick={handleClickOpen}>
-                        New
+                        New Project
                     </Button>
                 </Box>
             </GridCard>
-            <SignupForm openState={open} placeOrderAndClose={placeOrderAndClose} handleClose={handleClose} />
+            <NewProjectDialog openState={open} createProjectAndClose={createProjectAndClose} handleClose={handleClose} />
             <SuccessAlert openState={alert} onClose={handleAlertClose}>
-                Order placed successfully!
+                Project created successfully!
             </SuccessAlert>
         </>
     );
 };
 
-export default NewSubscription;
+export default NewProjectCard;

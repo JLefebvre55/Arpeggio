@@ -1,5 +1,5 @@
 // React engine
-import { FC, useState, useEffect, ReactNode } from 'react';
+import { FC, useState, ReactNode } from 'react';
 
 // MUI Core
 import Typography from '@material-ui/core/Typography';
@@ -17,10 +17,6 @@ import IconButton from '@material-ui/core/IconButton';
 // MUI Other
 import { createStyles, makeStyles, Theme, withStyles, WithStyles } from '@material-ui/core/styles';
 import CloseIcon from '@material-ui/icons/Close';
-
-// Auth, Firebase
-import { useAuth } from '../contexts/AuthContext';
-import { collection, getDocs, getFirestore } from '@firebase/firestore';
 
 // Styles
 const styles = (theme: Theme) => createStyles({
@@ -46,67 +42,24 @@ const useStyles = makeStyles(styles);
 
 // ===== Signup Dialog =====
 
-// Types
-type ProduceOption = {
-    name: string,
-    price: number
-}
-export type ProduceSelection = {
-    quantity: number,
-    option: ProduceOption
-}
-
 // Props
-interface SignupProps {
+interface NewProjectDialogProps {
     openState: boolean;
-    placeOrderAndClose: (selection: {[id: string]: ProduceSelection}, period: number, address: string)=>void; 
+    createProjectAndClose: (name: string)=>void; 
     handleClose: ()=>void;
 }
 
 // Main component
-const SignupForm: FC<SignupProps> = (props: SignupProps) => {
+const NewProjectDialog: FC<NewProjectDialogProps> = (props) => {
     const classes = useStyles();
-    const user = useAuth();
     
     // Selection state
-    const [selection, setSelection] = useState<{[id: string]: ProduceSelection}>({});
-
-    useEffect(() => {
-        getDocs(collection(getFirestore(), 'options')).then(docs=>{
-            setSelection(Object.fromEntries(docs.docs.map(doc=>{
-                return [doc.id, {
-                    quantity: 0, 
-                    option: {
-                        name: doc.data().name, 
-                        price: doc.data().price
-                    }
-                }];
-            })));
-        });
-    }, [user]);
-
-    const updateSelection = (option: string, quantity: number) => {
-        const newstate = Object.fromEntries(Object.entries(selection));
-        newstate[option].quantity = quantity;
-        setSelection(newstate);
-    };
-    
-    // Shipping states
-    const [address, setAddress] = useState<string>('');
-    const [period, setPeriod] = useState<number>(7);
+    const [name, setName] = useState<string>('Untitled Project');
 
     // Form state
     const resetForm = () => {
-        for (const item of Object.entries(selection)) {
-            updateSelection(item[0], 0);
-        }
-        setAddress('');
-        setPeriod(7);
+        setName('Untitled Project');
     };
-
-    const incomplete = Object.values(selection).every(value=>{
-        return value.quantity === 0;
-    }) || address.length < 1;
 
     return (
         <div>
@@ -119,31 +72,16 @@ const SignupForm: FC<SignupProps> = (props: SignupProps) => {
                 maxWidth={'sm'}
             >
                 <DialogTitle id='customized-dialog-title' onClose={props.handleClose}>
-                    Create a New Subscription
+                    Create a New Project
                 </DialogTitle>
                 <DialogContent dividers>
-                    <FormLabel component='legend'>Select Produce:</FormLabel>
-                    <FormLabel component='legend'>Select Shipping Period:</FormLabel>
-                    <FormGroup>
-                        <FormControl className={classes.formControl}>
-                            <TextField
-                                type='number'
-                                value={period}
-                                onChange={(event)=>{
-                                    setPeriod(Math.min(Math.max(Number(event.target.value), 1),14));
-                                }}
-                                helperText='Days Between Shipments'
-                            />
-                        </FormControl>
-                    </FormGroup>
-                    <FormLabel component='legend'>Enter Shipping Address:</FormLabel>
+                    <FormLabel component='legend'>Enter Project Name:</FormLabel>
                     <FormGroup>
                         <FormControl className={classes.formControl}>
                             <TextField 
-                                placeholder='123 Main St., Springfield, USA' 
-                                value={address} 
+                                value={name} 
                                 onChange={(event)=>{
-                                    setAddress(event.target.value);
+                                    setName(event.target.value);
                                 }}
                             />
                         </FormControl>
@@ -153,13 +91,12 @@ const SignupForm: FC<SignupProps> = (props: SignupProps) => {
                     <Button 
                         autoFocus 
                         onClick={()=>{
-                            props.placeOrderAndClose(selection, period, address); 
+                            props.createProjectAndClose(name); 
                             resetForm();
                         }} 
                         color='primary' 
-                        disabled={incomplete}
                     >
-                        Place Recurring Order
+                        Create Project
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -203,4 +140,4 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
     );
 });
 
-export default SignupForm;
+export default NewProjectDialog;

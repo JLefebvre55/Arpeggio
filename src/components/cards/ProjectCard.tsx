@@ -1,5 +1,6 @@
 // React engine
 import { useState, FC } from 'react';
+import { Link } from 'react-router-dom';
 
 // MUI core
 import Typography from '@material-ui/core/Typography';
@@ -15,8 +16,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles';
 
 // Auth, Firebase'
-import firebase from 'firebase';
-import 'firebase/firestore';
+import { deleteDoc, doc, getFirestore } from '@firebase/firestore';
 
 // My Components, Types
 import GridCard from './GridCard';
@@ -39,21 +39,13 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export type DeviceCardProps = {
-    item: {
-        destination: string,
-        source: string,
-        period: number,
-        owner: string,
-        list: {
-            [key: string]: number
-        }
-    },
-    docPath: string,
-    deleteAlert: ()=>void
+export type ProjectCardProps = {
+    name: string,
+    id: string,
+    deleteAlert: ()=>void,
 }
 
-const DeviceCard:FC<DeviceCardProps> = (props) => {
+const ProjectCard:FC<ProjectCardProps> = (props) => {
     const classes = useStyles();
     
     // Delete confirmation dialog
@@ -64,20 +56,20 @@ const DeviceCard:FC<DeviceCardProps> = (props) => {
     const handleDeleteClose = () => {
         setDeleteOpen(false);
     };
-    const handleCancelAndClose = () => {
+    const handleDeleteAndClose = () => {
         handleDeleteClose();
         props.deleteAlert();
-        firebase.firestore().doc(props.docPath).delete();
+        deleteDoc(doc(getFirestore(), 'projects/'+props.id))
     };
-    
+
     return (
         <GridCard>
             <Typography variant='h6' className={classes.title}>
                 <Box className={classes.titlebox}>
-                    {props.item.destination}
+                    {props.name}
                 </Box>
             </Typography>
-            <Box className={classes.textbox}>
+            {/* <Box className={classes.textbox}>
                 <Typography variant='body2'>
                     Delivers from {props.item.source} every {props.item.period} days: {Object.entries(props.item.list).filter(entry=> {
                         return Number(entry[1])>0;
@@ -85,13 +77,13 @@ const DeviceCard:FC<DeviceCardProps> = (props) => {
                         return entry[1]+'x '+entry[0];
                     }).join(', ')}
                 </Typography>
-            </Box>
+            </Box> */}
             <Box className={classes.buttonbox}>
-                <Button variant='contained' color='primary' onClick={()=>{return;}}>
-                    Modify
-                </Button>
+                <Link to={`/project/${props.id}`}><Button variant='contained' color='primary'>
+                    Open
+                </Button></Link>
                 <Button variant='contained' color='secondary' onClick={handleDeleteOpen}>
-                Delete
+                    Delete
                 </Button>
             </Box>
             <Dialog
@@ -100,17 +92,17 @@ const DeviceCard:FC<DeviceCardProps> = (props) => {
                 aria-labelledby='alert-dialog-title'
                 aria-describedby='alert-dialog-description'
             >
-                <DialogTitle id='alert-dialog-title'>{`Delete Subscription for ${props.item.destination}?`}</DialogTitle>
+                <DialogTitle id='alert-dialog-title'>{`Delete Project "${props.name}"?`}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id='alert-dialog-description'>
-                        This subscription will be cancelled immediately. Any produce already paid for will be shipped as ordered, and billing will stop.
+                        This project and all its assets will be deleted. It will not be able to be recovered.
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleDeleteClose} color='inherit'>
                         Cancel
                     </Button>
-                    <Button onClick={handleCancelAndClose} color='secondary' autoFocus>
+                    <Button onClick={handleDeleteAndClose} color='secondary' autoFocus>
                         Confirm
                     </Button>
                 </DialogActions>
@@ -119,4 +111,4 @@ const DeviceCard:FC<DeviceCardProps> = (props) => {
     );
 };
 
-export default DeviceCard;
+export default ProjectCard;

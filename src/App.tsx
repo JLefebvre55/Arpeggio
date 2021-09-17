@@ -12,6 +12,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 // Pages
 import Dashboard from './pages/Dashboard';
 import Auth from './pages/Auth';
+import DAW from './pages/DAW';
 
 // Theme
 import { createTheme, ThemeProvider } from '@material-ui/core/styles';
@@ -28,7 +29,7 @@ const theme = createTheme({
         },
         text: {
             primary: '#ffffff',
-            secondary: '#383645'
+            secondary: '#ffffff'
         },
         primary: {
             main: '#ffb634',
@@ -84,6 +85,7 @@ const App:FC = () => {
                         <Route exact path='/login'>
                             {useAuth() ? <Redirect to='/dashboard'/> : <Auth/> }
                         </Route>
+                        <Route path='/project/:id' render={(props)=><DAW {...props}/>}/>
                         <Route path='/'> 
                             <Redirect to='/dashboard'/>
                         </Route>

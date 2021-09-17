@@ -15,8 +15,8 @@ import { useAuth } from '../contexts/AuthContext';
 import { collection, query, where, onSnapshot, getFirestore } from '@firebase/firestore'
 
 // My Components, Types
-import DeviceCard, { DeviceCardProps } from './cards/ProjectCard';
-import NewSubscription from './cards/NewProject';
+import ProjectCard, { ProjectCardProps } from './cards/ProjectCard';
+import NewProjectCard from './cards/NewProjectCard';
 import SuccessAlert from './SuccessAlert';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -36,24 +36,24 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 // Props
-export type DeviceGridProps = {
-    items?: DeviceCardProps[]
+export type ProjectGridProps = {
+    items?: ProjectCardProps[]
 };
 
 // Main Component
-const DeviceGrid : FC<DeviceGridProps> = (props) => {
+const DeviceGrid : FC<ProjectGridProps> = (props) => {
     const classes = useStyles();
     const user = useAuth();
     
     // Grid data state
     const [gridData, setGridData] = useState(props.items);
     useEffect(() => {
-        return onSnapshot(query(collection(getFirestore(), 'devices'), where('owner', '==', user?.uid)), snapshot=>{
+        return onSnapshot(query(collection(getFirestore(), 'projects'), where('owner', '==', user?.uid)), snapshot=>{
             const data = snapshot.docs.map(doc=>{
                 return ({
-                    item: doc.data(), 
-                    docPath: doc.ref.path
-                } as DeviceCardProps);
+                    name: doc.data().name ?? "Untitled Project", 
+                    id: doc.ref.id
+                } as ProjectCardProps);
             });
             setGridData(data);
         });
@@ -87,15 +87,15 @@ const DeviceGrid : FC<DeviceGridProps> = (props) => {
                     <Grid container spacing={3} className={classes.root}>
                         {gridData.map((item, index) => {
                             return (
-                                <DeviceCard 
+                                <ProjectCard 
                                     key={index} 
-                                    item={item.item} 
-                                    docPath={item.docPath} 
+                                    name={item.name} 
+                                    id={item.id} 
                                     deleteAlert={handleDeleteAlertOpen}
                                 />
                             );
                         })}
-                        <NewSubscription/>
+                        <NewProjectCard/>
                         <SuccessAlert openState={deleteAlert} onClose={handleDeleteAlertClose}>
                             Project deleted!
                         </SuccessAlert>
